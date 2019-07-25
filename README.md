@@ -1,2 +1,1 @@
-# reu2019
-NRAO Summer 2019 project, modeling protoplanetary disk SEDs
+NRAO Summer 2019 project, probabilistic modeling of protoplanetary SEDs with gaussian processes trained on radiative transfer models
