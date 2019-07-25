@@ -1,3 +1,3 @@
-nphot_therm = 1000000
-modified_random_walk = 1
+nphot_spec = 100000
+camera_scatsrc_allfreq = 1
 setthreads = 17
