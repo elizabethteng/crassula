@@ -7,8 +7,6 @@ from time import time
 import pdspy.modeling as modeling
 import pdspy.dust as dust
 import numpy as np
-import lhsmdu #github.com/sahilm89
-
 
 ranges = [[3000.,5000.], [-1,3.],[-8.,-2.], [0.,3.],[0.01,0.5],[-1.,2.5],[0.0,2.0],\
         [0.5,2.0],[-8.,-2.],[2.5,4.], [0.,1.], [0.5,1.5],[0.,5.],[2.5,4.5],[0.,90.]]
@@ -18,15 +16,6 @@ for i in range(len(ranges)):
     steps.append(np.linspace(ranges[i][0],ranges[i][1],11))
     bases.append(steps[i][5])
 pars=bases
-
-#r=[ranges[7],ranges[14]]
-#coords=np.array(lhsmdu.sample(2,85))
-#coords=coords*np.array([r[0][1]-r[0][0],r[1][1]-r[1][0]])[:,np.newaxis]
-#coords+=np.array([r[0][0],r[1][0]])[:,np.newaxis]
-#with open('../grid_metadata/714_coords.txt', 'wb') as fp:
-#    pickle.dump(coords, fp)
-with open ('../grid_metadata/714_coords.txt', 'rb') as fp:
-    coords = pickle.load(fp)
 
 def run_yso_model( Tstar=None, logL_star=None, \
         logM_disk=None, logR_disk=None, h_0=None, logR_in=None, gamma=None, \
@@ -85,7 +74,7 @@ def run_yso_model( Tstar=None, logL_star=None, \
             verbose=False, setthreads=20)
     
     filename=""
-    for i in range(len(params)):
+    for i in range(len(param_names)):
         filename+=param_names[i]+"_"
         filename+=str(params[i])+"_"
     filename=filename[:-1]
@@ -93,15 +82,27 @@ def run_yso_model( Tstar=None, logL_star=None, \
     print("finished running "+filename[0:40]+"... in %0.3fs" % (time() - t2))
     
     # Write out the file.
-    model.write_yso("../grid/grid714/"+filename)
+    model.write_yso("../grid/transform/"+filename)
 
-for i in range(len(coords[0])):
+gammafill=[1.66,1.733, 1.84,1.88,1.92,1.96]
+logmenvfill=[-3.6,-3.4,-3.0,-2.8,-2.48,-2.36,-2.24,-2.12]
+
+
+for i in range(len(gammafill)):
     t0=time()
     run_yso_model(Tstar=pars[0], logL_star=pars[1], \
-            logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=pars[6], \
-            beta=coords[0][i], logM_env=pars[8], logR_env=pars[9], f_cav=pars[10], ksi=pars[11], \
-            loga_max=pars[12], p=pars[13], incl=coords[1][i])
+            logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=gammafill[i],\
+            beta=pars[7], logM_env=pars[8], logR_env=pars[9], f_cav=pars[10], ksi=pars[11], \
+            loga_max=pars[12], p=pars[13], incl=pars[14])
     print("finished running SED #"+str(i)+" in %0.3fs" % (time() - t0))
 
+for i in range(len(logmenvfill)):
+    t0=time()
+    run_yso_model(Tstar=pars[0], logL_star=pars[1], \
+            logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=pars[6],\
+            beta=pars[7], logM_env=logmenvfill[i], logR_env=pars[9], f_cav=pars[10], ksi=pars[11], \
+            loga_max=pars[12], p=pars[13], incl=pars[14])
+
+    print("finished running SED #"+str(i)+" in %0.3fs" % (time() - t0))
 
 
