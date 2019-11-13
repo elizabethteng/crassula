@@ -19,12 +19,12 @@ for i in range(len(ranges)):
     bases.append(steps[i][5])
 pars=bases
 
-#r=[ranges[7],ranges[14]]
-#coords=np.array(lhsmdu.sample(2,85))
-#coords=coords*np.array([r[0][1]-r[0][0],r[1][1]-r[1][0]])[:,np.newaxis]
-#coords+=np.array([r[0][0],r[1][0]])[:,np.newaxis]
-#with open('../grid_metadata/714_coords.txt', 'wb') as fp:
-#    pickle.dump(coords, fp)
+r=[ranges[7],ranges[14]]
+coords=np.array(lhsmdu.sample(2,120))
+coords=coords*np.array([r[0][1]-r[0][0],r[1][1]-r[1][0]])[:,np.newaxis]
+coords+=np.array([r[0][0],r[1][0]])[:,np.newaxis]
+with open('../grid_metadata/714_coords.txt', 'wb') as fp:
+    pickle.dump(coords, fp)
 with open ('../grid_metadata/714_coords.txt', 'rb') as fp:
     coords = pickle.load(fp)
 
@@ -71,7 +71,7 @@ def run_yso_model( Tstar=None, logL_star=None, \
 
     # Run the thermal simulation
     model.run_thermal(code="radmc3d", nphot=1e6, \
-            modified_random_walk=True, verbose=False, setthreads=20, \
+            modified_random_walk=True, verbose=False, setthreads=17, \
             timelimit=10800)
     
     print("finished running thermal simulation, now running SED")
@@ -82,7 +82,7 @@ def run_yso_model( Tstar=None, logL_star=None, \
     model.set_camera_wavelength(np.logspace(-1.,4.,500))
     model.run_sed(name="SED", nphot=1e5, loadlambda=True, incl=incl, \
             pa=0., dpc=140., code="radmc3d", camera_scatsrc_allfreq=True, \
-            verbose=False, setthreads=20)
+            verbose=False, setthreads=17)
     
     filename=""
     for i in range(len(params)):
@@ -93,9 +93,9 @@ def run_yso_model( Tstar=None, logL_star=None, \
     print("finished running "+filename[0:40]+"... in %0.3fs" % (time() - t2))
     
     # Write out the file.
-    model.write_yso("../grid/grid714/"+filename)
+    model.write_yso("../grid/grid714a/"+filename)
 
-for i in range(len(coords[0])):
+for i in range(0,60):
     t0=time()
     run_yso_model(Tstar=pars[0], logL_star=pars[1], \
             logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=pars[6], \

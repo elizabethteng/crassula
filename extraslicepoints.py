@@ -60,7 +60,7 @@ def run_yso_model( Tstar=None, logL_star=None, \
 
     # Run the thermal simulation
     model.run_thermal(code="radmc3d", nphot=1e6, \
-            modified_random_walk=True, verbose=False, setthreads=20, \
+            modified_random_walk=True, verbose=False, setthreads=17, \
             timelimit=10800)
     
     print("finished running thermal simulation, now running SED")
@@ -71,7 +71,7 @@ def run_yso_model( Tstar=None, logL_star=None, \
     model.set_camera_wavelength(np.logspace(-1.,4.,500))
     model.run_sed(name="SED", nphot=1e5, loadlambda=True, incl=incl, \
             pa=0., dpc=140., code="radmc3d", camera_scatsrc_allfreq=True, \
-            verbose=False, setthreads=20)
+            verbose=False, setthreads=17)
     
     filename=""
     for i in range(len(param_names)):
@@ -82,21 +82,21 @@ def run_yso_model( Tstar=None, logL_star=None, \
     print("finished running "+filename[0:40]+"... in %0.3fs" % (time() - t2))
     
     # Write out the file.
-    model.write_yso("../grid/transform/"+filename)
+    model.write_yso("../../grid/transform/"+filename)
 
 gammafill=[1.66,1.733, 1.84,1.88,1.92,1.96]
 logmenvfill=[-3.6,-3.4,-3.0,-2.8,-2.48,-2.36,-2.24,-2.12]
 
 
-for i in range(len(gammafill)):
-    t0=time()
-    run_yso_model(Tstar=pars[0], logL_star=pars[1], \
-            logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=gammafill[i],\
-            beta=pars[7], logM_env=pars[8], logR_env=pars[9], f_cav=pars[10], ksi=pars[11], \
-            loga_max=pars[12], p=pars[13], incl=pars[14])
-    print("finished running SED #"+str(i)+" in %0.3fs" % (time() - t0))
+#for i in range(2,2,n(gammafill)):
+#    t0=time()
+#    run_yso_model(Tstar=pars[0], logL_star=pars[1], \
+#            logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=gammafill[i],\
+#            beta=pars[7], logM_env=pars[8], logR_env=pars[9], f_cav=pars[10], ksi=pars[11], \
+#            loga_max=pars[12], p=pars[13], incl=pars[14])
+#    print("finished running SED #"+str(i)+" in %0.3fs" % (time() - t0))
 
-for i in range(len(logmenvfill)):
+for i in range(4,len(logmenvfill)):
     t0=time()
     run_yso_model(Tstar=pars[0], logL_star=pars[1], \
             logM_disk=pars[2], logR_disk=pars[3], h_0=pars[4], logR_in=pars[5], gamma=pars[6],\
